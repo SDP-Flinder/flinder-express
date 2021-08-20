@@ -7,7 +7,8 @@ const http = require("http")
 require('dotenv').config()
 
 // Import Routers
-const userRouter = require('./routes/user-router')
+const userRouter = require('./routes/userRouter')
+const indexRouter = require('./routes/indexRouter')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -17,9 +18,10 @@ app.use(cors())
 app.use(bodyParser.json())
 
 // Set up DB
-//db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // Use Routers
+app.use('/', indexRouter)
 app.use('/user', userRouter)
 
 const server = http.createServer(app);
