@@ -3,8 +3,7 @@ const User = require('../users/user.model');
 const Schema = mongoose.Schema;
 
 const FlatSchema = new Schema({
-  //FIXME owner type invalid
-  //owner: { type: User, required: true },
+  ownerID: { type: String, required: true },
   address: { type: String, required: true },
   description: { type: String, required: true },
   existingFlatmates: { type: Number, required: true }

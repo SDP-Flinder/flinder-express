@@ -5,7 +5,7 @@ const authorize = require('_helpers/authorize')
 const Role = require('_helpers/role');
 
 // routes
-router.post('/create', authorize(Role.Flat, Role.Admin), create)
+router.post('/create', authorize(Role.Flat), create)
 router.get('/', authorize(Role.Flat), getOwned);
 router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(),  getById);

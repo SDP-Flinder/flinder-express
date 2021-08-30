@@ -1,5 +1,5 @@
 module.exports = {
-    Admin: "Admin",
-    Flat: 'Flat',
-    Flatee: 'Flatee'
+    Admin: 'admin',
+    Flat: 'flat',
+    Flatee: 'flatee'
   }
