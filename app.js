@@ -4,20 +4,16 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const errorHandler = require('_helpers/error-handler');
-const jwt = require('./_helpers/jwt');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
-// use JWT auth to secure the api
-// app.use(jwt());
-
-// api routes
+// API routes
 app.use('/users', require('./users/user.controller'));
 app.use('/flats', require('./flats/flat.controller'));
 
-// global error handler
+// Global error handler
 app.use(errorHandler);
 // Handle errors.
 app.use(function(err, req, res, next) {
