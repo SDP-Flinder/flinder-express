@@ -7,7 +7,7 @@ const UserSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   createdDate: { type: Date, default: Date.now },
-  role: {type: String, enum: ['admin', 'flat', 'flatee'], default: 'flatee'}
+  role: {type: String, enum: ['admin', 'flat', 'flatee'], default: 'flatee'},
 });
 
 UserSchema.set('toJSON', {
