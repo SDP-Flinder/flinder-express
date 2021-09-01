@@ -1,29 +1,7 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const db = require('./db')
-const path = require("path")
-const http = require("http")
-require('dotenv').config()
+const app = require('./app');
 
-// Import Routers
-const userRouter = require('./routes/userRouter')
-const indexRouter = require('./routes/indexRouter')
-
-const app = express()
-const PORT = process.env.PORT || 3000
-
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors())
-app.use(bodyParser.json())
-
-// Set up DB
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
-
-// Use Routers
-app.use('/', indexRouter)
-app.use('/user', userRouter)
-
-const server = http.createServer(app);
-
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// start server
+const port = process.env.NODE_ENV === 'production' ? 80 : 4000;
+const server = app.listen(port, function () {
+    console.log('Server listening on port ' + port);
+});
