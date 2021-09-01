@@ -6,8 +6,29 @@ const UserSchema = new Schema({
   hash: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  email: {type: String, required: true},
+  dob: {type: Date, required: true},
   createdDate: { type: Date, default: Date.now },
   role: {type: String, enum: ['admin', 'flat', 'flatee'], default: 'flatee'},
+  
+  //This is for accounts type flat
+  address: { type: Object,
+    properties:{
+      street: {
+        type: String,
+      },
+      suburb: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      country: {
+        type: String,
+      },
+    }},
+  description: {type: String},
+  existingFlatmates: { type: Number}
 });
 
 UserSchema.set('toJSON', {
