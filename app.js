@@ -12,11 +12,12 @@ app.use(cors());
 // API routes
 app.use('/users', require('./users/user.controller'));
 app.use('/flats', require('./flats/flat.controller'));
+app.use('/matches', require('./matches/match.controller'));
 
 // Global error handler
 app.use(errorHandler);
 // Handle errors.
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error: err });
 });
