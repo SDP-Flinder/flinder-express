@@ -5,9 +5,9 @@ const authorize = require('_helpers/authorize')
 const Role = require('_helpers/role');
 
 // routes
-router.post('/add', authorize(Role.Flat), addListing)
+router.post('/add', addListing)
 router.get('/', authorize(Role.Flat), getOwned);
-// router.get('/all', authorize(Role.Admin), getAll);
+router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
 router.put('/:id', authorize(Role.Flat), update);
 router.delete('/:id', authorize(Role.Flat), _delete);
@@ -18,11 +18,11 @@ function addListing(req, res, next) {
         .catch(err => next(err));
 }
 
-// function getAll(req, res, next) {
-//     listingService.getAll()
-//         .then(users => res.json(users))
-//         .catch(err => next(err));
-// }
+function getAll(req, res, next) {
+    listingService.getAll()
+        .then(users => res.json(users))
+        .catch(err => next(err));
+}
 
 function getOwned(req, res, next) {
     listingService.getById(req.user.sub)

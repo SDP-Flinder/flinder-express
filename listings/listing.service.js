@@ -5,7 +5,7 @@ const db = require('_helpers/db');
 const Listing = db.Listing;
 
 module.exports = {
-    // getAll,
+    getAll,
     getOwned,
     getById,
     addListing,
@@ -13,9 +13,9 @@ module.exports = {
     delete: _delete
 };
 
-// async function getAll() {
-//     return await Listing.find();
-// }
+async function getAll() {
+    return await Listing.find();
+}
 
 async function getOwned() {
     return await Listing.find();
