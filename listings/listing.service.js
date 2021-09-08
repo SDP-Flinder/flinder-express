@@ -46,16 +46,16 @@ async function addListing(listingparam) {
 }
 
 async function update(id, listingparam) {
-    const Listing = await Listing.findById(id)
+    return await Listing.findById(id)
         .then(listing => {
-            listing.description = listingparam.description;
-            listing.utilities = listingparam.utilities;
-            listing.rent = Number(listingparam.rent);
-            listing.rentUnits = listingparam.rentUnits;
-            listing.roomAvailable = Date.parse(listingparam.roomAvailable);
+            listing.description = listingparam.body.description;
+            listing.utilities = listingparam.body.utilities;
+            listing.rent = Number(listingparam.body.rent);
+            listing.rentUnits = listingparam.body.rentUnits;
+            listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+
+            listing.save();
         });
-    
-    return await Listing.save();
 }
 
 async function _delete(id) {
