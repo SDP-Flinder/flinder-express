@@ -28,7 +28,34 @@ const UserSchema = new Schema({
       },
     }},
   description: {type: String},
-  existingFlatmates: { type: Number}
+  existingFlatmates: { type: Number},
+
+  //This is for the flatee accounts
+  preferredArea: {type: Object,
+    properties: {
+      city: {
+        type: String,
+      },
+      suburb: {
+        type: [String],
+      },
+    }
+  },
+
+  checklist: {type: Object,
+    properties: {
+      isCouple: {type: Boolean},
+      isSmoker: {type: Boolean},
+      hasPet: {type: Boolean},
+      priceRange: {
+        type: Object,
+        properties: {
+          min: {type: String},
+          max: {type: String},
+        },
+      },
+    }, 
+  },
 });
 
 UserSchema.set('toJSON', {
