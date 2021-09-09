@@ -17,8 +17,8 @@ async function getAll() {
     return await Listing.find();
 }
 
-async function getOwned() {
-    return await Listing.find();
+async function getOwned(id) {
+    return await Listing.find({ flat_id: id } );
 }
 
 async function getById(id) {
@@ -26,7 +26,7 @@ async function getById(id) {
 }
 
 async function addListing(listingparam) {
-    // const flatID = listingparam.flatID;
+    const flat_id = listingparam.flat_id;
     const description = listingparam.description;
     const utilities = listingparam.utilities;
     const rent = Number(listingparam.rent);
@@ -34,7 +34,7 @@ async function addListing(listingparam) {
     const roomAvailable = Date.parse(listingparam.roomAvailable);
 
     const newListing = new Listing({
-        // flatID,
+        flat_id,
         description,
         utilities,
         rent,
@@ -46,16 +46,28 @@ async function addListing(listingparam) {
 }
 
 async function update(id, listingparam) {
-    return await Listing.findById(id)
-        .then(listing => {
-            listing.description = listingparam.body.description;
-            listing.utilities = listingparam.body.utilities;
-            listing.rent = Number(listingparam.body.rent);
-            listing.rentUnits = listingparam.body.rentUnits;
-            listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+    const listing = await Listing.findById(id);
 
-            listing.save();
-        });
+    listing.description = listingparam.body.description;
+    listing.utilities = listingparam.body.utilities;
+    listing.rent = Number(listingparam.body.rent);
+    listing.rentUnits = listingparam.body.rentUnits;
+    listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+
+   return await listing.save();
+
+    // const updateListing = await Listing.findById(id)
+    //     .then(listing => {
+    //         listing.description = listingparam.body.description;
+    //         listing.utilities = listingparam.body.utilities;
+    //         listing.rent = Number(listingparam.body.rent);
+    //         listing.rentUnits = listingparam.body.rentUnits;
+    //         listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+
+    //         listing.save()
+    //     });
+
+    // return await updateListing;
 }
 
 async function _delete(id) {

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ListingSchema = new Schema({
-  // flatID: { type: String, required: true },
+  flat_id: { type: String, required: true },
   description: { type: String, required: true },
   utilities: { type: String, required: false },
   rent: { type: Number, required: true },

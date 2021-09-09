@@ -5,27 +5,27 @@ const authorize = require('_helpers/authorize')
 const Role = require('_helpers/role');
 
 // routes
-router.post('/add', addListing)
-router.get('/', getOwned);
-router.get('/all', getAll);
-router.get('/:id', getById);
-router.put('/:id', update);
-router.delete('/:id', _delete);
+router.post('/add', authorize(Role.Flat), addListing)
+router.get('/', authorize(Role.Flat), getOwned);
+router.get('/all', authorize(Role.Admin), getAll);
+router.get('/:id', authorize(Role.Flat), getById);
+router.put('/:id', authorize(Role.Flat), update);
+router.delete('/:id', authorize(Role.Flat), _delete);
 
 function addListing(req, res, next) {
     listingService.addListing(req.body)
-        .then(() => res.json({}))
+        .then(listing => res.json(listing))
         .catch(err => next(err));
 }
 
 function getAll(req, res, next) {
     listingService.getAll()
-        .then(users => res.json(users))
+        .then(listings => res.json(listings))
         .catch(err => next(err));
 }
 
 function getOwned(req, res, next) {
-    listingService.getById(req.user.sub)
+    listingService.getOwned(req.body.flat_id)
         .then(listing => listing ? res.json(listing) : res.sendStatus(404))
         .catch(err => next(err));
 }
