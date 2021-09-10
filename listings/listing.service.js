@@ -48,11 +48,15 @@ async function addListing(listingparam) {
 async function update(id, listingparam) {
     const listing = await Listing.findById(id);
 
+    console.log(listing);
+
     listing.description = listingparam.body.description;
     listing.utilities = listingparam.body.utilities;
     listing.rent = Number(listingparam.body.rent);
     listing.rentUnits = listingparam.body.rentUnits;
     listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+
+    console.log(listing);
 
    return await listing.save();
 

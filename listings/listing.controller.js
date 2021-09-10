@@ -6,7 +6,7 @@ const Role = require('_helpers/role');
 
 // routes
 router.post('/add', authorize(Role.Flat), addListing)
-router.get('/', authorize(Role.Flat), getOwned);
+router.get('/', getOwned);
 router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(Role.Flat), getById);
 router.put('/:id', authorize(Role.Flat), update);
@@ -45,7 +45,6 @@ function update(req, res, next) {
     //     return res.status(401).json({ message: 'Unauthorized' });
     // }
 
-    //Returns "404 not found, despite actually updating the entry"
     listingService.update(req.params.id, req)
         .then(listing => listing ? res.json(listing) : res.sendStatus(404))
         .catch(err => next(err));
