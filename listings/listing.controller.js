@@ -6,7 +6,7 @@ const Role = require('_helpers/role');
 
 // routes
 router.post('/add', authorize(Role.Flat), addListing)
-router.get('/flat/:id', getOwned);
+router.get('/flat/:id', authorize(Role.Flat), getOwned);
 router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(Role.Flat), getById);
 router.put('/:id', authorize(Role.Flat), update);
