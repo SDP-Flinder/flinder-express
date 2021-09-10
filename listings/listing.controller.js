@@ -6,7 +6,7 @@ const Role = require('_helpers/role');
 
 // routes
 router.post('/add', authorize(Role.Flat), addListing)
-router.get('/', getOwned);
+router.get('/flat/:id', getOwned);
 router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(Role.Flat), getById);
 router.put('/:id', authorize(Role.Flat), update);
@@ -25,7 +25,7 @@ function getAll(req, res, next) {
 }
 
 function getOwned(req, res, next) {
-    listingService.getOwned(req.body.flat_id)
+    listingService.getOwned(req.params.id)
         .then(listing => listing ? res.json(listing) : res.sendStatus(404))
         .catch(err => next(err));
 }

@@ -18,7 +18,10 @@ async function getAll() {
 }
 
 async function getOwned(id) {
-    return await Listing.find({ flat_id: id } );
+    console.log(id);
+    const listings = await Listing.find({ flat_id: id } );
+    // console.log(listings);
+    return listings;
 }
 
 async function getById(id) {
