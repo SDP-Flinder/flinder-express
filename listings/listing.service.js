@@ -78,5 +78,5 @@ async function update(id, listingparam) {
 }
 
 async function _delete(id) {
-    await Listing.findByIdAndRemove(id);
+    return await Listing.findByIdAndRemove(id);
 }
