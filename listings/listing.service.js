@@ -18,9 +18,7 @@ async function getAll() {
 }
 
 async function getOwned(id) {
-    console.log(id);
     const listings = await Listing.find({ flat_id: id } );
-    // console.log(listings);
     return listings;
 }
 
@@ -52,31 +50,16 @@ async function addListing(listingparam) {
 async function update(id, listingparam) {
     const listing = await Listing.findById(id);
 
-    console.log(listing);
+    Object.assign(listing, listingparam.body);
 
-    listing.description = listingparam.body.description;
-    listing.utilities = listingparam.body.utilities;
-    listing.rent = Number(listingparam.body.rent);
-    listing.rentUnits = listingparam.body.rentUnits;
-    listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
-    listing.active = listingparam.body.active;
-
-    console.log(listing);
+    // listing.description = listingparam.body.description;
+    // listing.utilities = listingparam.body.utilities;
+    // listing.rent = Number(listingparam.body.rent);
+    // listing.rentUnits = listingparam.body.rentUnits;
+    // listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+    // listing.active = listingparam.body.active;
 
    return await listing.save();
-
-    // const updateListing = await Listing.findById(id)
-    //     .then(listing => {
-    //         listing.description = listingparam.body.description;
-    //         listing.utilities = listingparam.body.utilities;
-    //         listing.rent = Number(listingparam.body.rent);
-    //         listing.rentUnits = listingparam.body.rentUnits;
-    //         listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
-
-    //         listing.save()
-    //     });
-
-    // return await updateListing;
 }
 
 async function _delete(id) {
