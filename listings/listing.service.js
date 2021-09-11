@@ -42,7 +42,8 @@ async function addListing(listingparam) {
         utilities,
         rent,
         rentUnits,
-        roomAvailable
+        roomAvailable,
+        active: true
     });
 
     return await newListing.save();
@@ -58,6 +59,7 @@ async function update(id, listingparam) {
     listing.rent = Number(listingparam.body.rent);
     listing.rentUnits = listingparam.body.rentUnits;
     listing.roomAvailable = Date.parse(listingparam.body.roomAvailable);
+    listing.active = listingparam.body.active;
 
     console.log(listing);
 

@@ -8,7 +8,8 @@ const ListingSchema = new Schema({
   utilities: { type: String, required: false },
   rent: { type: Number, required: true },
   rentUnits: { type: String, required: true },
-  roomAvailable: { type: Date, required: true }
+  roomAvailable: { type: Date, required: true },
+  active: { type: Boolean, required: true }
 });
 
 ListingSchema.set('toJSON', {
