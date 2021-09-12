@@ -17,5 +17,6 @@ mongoose.Promise = global.Promise;
 module.exports = {
     User: require('../users/user.model'),
     Flat: require('../flats/flat.model'),
-    matchList: require('../matches/match.model')
+    matchList: require('../matches/match.model'),
+    Listing: require('../listings/listing.model')
 };

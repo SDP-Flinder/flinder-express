@@ -15,6 +15,7 @@ app.use(cors());
 app.use('/users', require('./users/user.controller'));
 app.use('/flats', require('./flats/flat.controller'));
 app.use('/matches', require('./matches/match.controller'));
+app.use('/listings', require('./listings/listing.controller'));
 
 app.get('/logout', authorize(), logout);
 
