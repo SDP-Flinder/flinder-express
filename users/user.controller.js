@@ -3,6 +3,7 @@ const router = express.Router();
 const userService = require('./user.service');
 const authorize = require('_helpers/authorize')
 const Role = require('_helpers/role');
+const blacklist = require('express-jwt-blacklist');
 
 // routes
 router.post('/authenticate', authenticate);
@@ -17,13 +18,16 @@ module.exports = router;
 
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
-        .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
+        .then(user => user ? res.json(user) : res.status(400).json({ message: 'incorrect-username-password' }))
         .catch(err => next(err));
 }
 
+/**
+ * Calls userService to create new user, then calls authenticate() to log user in
+ */
 function register(req, res, next) {
     userService.create(req.body)
-        .then(() => res.json({}))
+        .then((msg) => (msg == 'user-created') ? authenticate((req.body.username, req.body.password), res, next) : res.json({message: msg}))
         .catch(err => next(err));
 }
 
