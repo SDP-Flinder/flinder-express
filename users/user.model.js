@@ -28,6 +28,7 @@ const UserSchema = new Schema({
       },
     }},
   description: {type: String},
+<<<<<<< HEAD
   existingFlatmates: { type: Number},
 
   //This is for the flatee accounts
@@ -59,6 +60,9 @@ const UserSchema = new Schema({
   photo: {
     type: String,
   }
+=======
+  existingFlatmates: { type: Number}
+>>>>>>> parent of c92d0a5 (Flatee features)
 });
 
 UserSchema.set('toJSON', {
