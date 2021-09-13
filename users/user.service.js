@@ -2,7 +2,7 @@ const config = require('config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('_helpers/db');
-let User = db.User;
+const User = db.User;
 
 module.exports = {
     authenticate,
@@ -33,12 +33,11 @@ async function getById(id) {
 }
 
 async function create(userParam) {
-
     // validate
-    if (await User.findOne({ username: req.body.username })) {
-        throw 'Username "' + userParam.username + '" is already taken';
+    if (await User.findOne({ username: userParam.username })) {
+        throw 'username-"' + userParam.username + '"-taken';
     }
-    
+
     const user = new User(userParam);
 
     // hash password
