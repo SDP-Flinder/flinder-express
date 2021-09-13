@@ -56,6 +56,9 @@ const UserSchema = new Schema({
       },
     }, 
   },
+  photo: {
+    type: String,
+  }
 });
 
 UserSchema.set('toJSON', {
