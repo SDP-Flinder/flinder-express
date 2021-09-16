@@ -116,7 +116,7 @@ async function getPotentialMatchesForListing(flatParam) {
     {
         if (doc.role == 'flatee' && doc.username != null)
         {
-            var tempMatch = await matchList.findOne({ flateeUsername: doc.username, flatUsername: flatParam.flatUsername });
+            var tempMatch = await matchList.findOne({ flateeUsername: doc.username, flatUsername: flatParam.listingID });
             if (tempMatch == null)
             {
                 continue;
