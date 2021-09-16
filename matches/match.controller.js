@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const matchService = require('./match.service');
-const authorize = require('_helpers/authorize')
+const {authorize} = require('_helpers/authorize')
 const matchState = require('_helpers/match-state');
 
 // routes

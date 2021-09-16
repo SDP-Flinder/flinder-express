@@ -4,8 +4,7 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const errorHandler = require('_helpers/error-handler');
-const jwt = require('./_helpers/jwt');
-const authorize = require('./_helpers/authorize');
+const {authorize, blacklist} = require('_helpers/authorize');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -18,9 +17,10 @@ app.use('/matches', require('./matches/match.controller'));
 app.use('/listings', require('./listings/listing.controller'));
 
 app.get('/logout', authorize(), logout);
+// app.get('/login', login);
 
 function logout(req, res, next) {
-  jwt.logout(req, res)
+  blacklist(req, res)
     // .then((msg) => res.json({message: msg}))
     // .catch(err => next(err));
 }

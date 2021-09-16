@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const listingService = require('./listing.service');
-const authorize = require('_helpers/authorize')
+const {authorize} = require('_helpers/authorize')
 const Role = require('_helpers/role');
 
 // routes
