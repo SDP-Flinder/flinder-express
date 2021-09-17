@@ -133,9 +133,9 @@ async function getPotentialMatchesForListing(flatParam) {
     }
 
     //if flatee hasnt appeared user's matchlist
-    //if flatee appears on user's matchlist, but matchState == "flat-pending"
+    //if flatee appears on user's matchlist, but matchState == "list-pending"
 
-    return tempList; //a card is not repeated and only show flatees that swiped right/haven't swiped on flat
+    return tempList; //a card is not repeated and only show flatees that swiped right on flat
 }
 
 //allows current flattee to add potential flat to list 
