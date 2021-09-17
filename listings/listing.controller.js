@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const listingService = require('./listing.service');
 const authorize = require('_helpers/authorize')
-const Role = require('_helpers/role');
+const Role = require('../_helpers/role');
 
 // routes
 router.post('/add', authorize(Role.Flat), addListing)
