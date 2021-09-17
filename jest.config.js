@@ -13,5 +13,6 @@ const config = {
       verbose: true,
       moduleFileExtensions: [...defaults.moduleFileExtensions, 'js'],
       testEnvironment: 'node',
+      preset: '@shelf/jest-mongodb'
     };
   };
