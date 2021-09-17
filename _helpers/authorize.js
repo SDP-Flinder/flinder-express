@@ -1,6 +1,6 @@
 const expressJwt = require('express-jwt');
 const expressBlacklist = require('express-jwt-blacklist');
-const { secret } = require('config.json');
+const { secret } = require('../config.json');
 
 module.exports = {
     authorize,

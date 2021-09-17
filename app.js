@@ -3,8 +3,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const errorHandler = require('_helpers/error-handler');
-const {authorize, blacklist} = require('_helpers/authorize');
+const errorHandler = require('./_helpers/error-handler');
+const {authorize, blacklist} = require('./_helpers/authorize');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
