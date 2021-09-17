@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const listingService = require('./listing.service');
-const authorize = require('_helpers/authorize')
-const Role = require('_helpers/role');
+const {authorize} = require('../_helpers/authorize')
+const Role = require('../_helpers/role');
 
 // routes
 router.post('/add', authorize(Role.Flat), addListing)
@@ -36,29 +36,16 @@ function getById(req, res, next) {
         .catch(err => next(err));
 }
 
+
+//Will look at adding role/account checks in a future release, if necessary
 function update(req, res, next) {
-    // const currentUser = req.user;
-    // const id = req.params.id;
-
-    // only allow admins to update other user records
-    // if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
-    //     return res.status(401).json({ message: 'Unauthorized' });
-    // }
-
     listingService.update(req.params.id, req)
         .then(listing => listing ? res.json(listing) : res.sendStatus(404))
         .catch(err => next(err));
 }
 
+//Will look at adding role/account checks in a future release, if necessary
 function _delete(req, res, next) {
-    // const currentUser = req.user;
-    // const id = parseInt(req.params.id);
-
-    // only allow admins to delete other user records
-    // if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
-    //     return res.status(401).json({ message: 'Unauthorized' });
-    // }
-
     listingService.delete(req.params.id)
         .then(listing => listing ? res.json(listing) : res.sendStatus(404))
         .catch(err => next(err));
