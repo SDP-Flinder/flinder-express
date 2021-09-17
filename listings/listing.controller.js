@@ -36,6 +36,7 @@ function getById(req, res, next) {
         .catch(err => next(err));
 }
 
+
 //Will look at adding role/account checks in a future release, if necessary
 function update(req, res, next) {
     listingService.update(req.params.id, req)
