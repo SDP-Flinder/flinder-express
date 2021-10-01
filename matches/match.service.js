@@ -5,6 +5,7 @@ const db = require('_helpers/db');
 const matchList = db.matchList;
 const users = db.User;
 const listings = db.Listing;
+const extensiveUserInfo = require('./extensiveUserInfo.model');
 
 module.exports = {
     getAll,
@@ -23,12 +24,12 @@ async function getAll() {
     return await matchList.find();
 }
 
-//this shows all profiles that the current profile has swiped right on (for chat purposes)
+//this shows all profiles that the current profile has successfully matched with (for chat purposes)
 async function getSuccessMatchesForFlatee(flateeParam) {
     return await matchList.find({ flateeUsername: flateeParam.flateeUsername, matchState: 'matched' });
 }
 
-//this shows all profiles that the current profile has swiped right on (for chat purposes)
+//this shows all profiles that the current profile has successfully matched with (for chat purposes)
 async function getSuccessMatchesForListing(listParam) {
     return await matchList.find({ listingID: listParam.listingID, matchState: 'matched' });
 }
@@ -49,16 +50,20 @@ async function getPotentialMatchesForFlatee(flateeParam) {
         {
             console.log("getPotentialMatchesForFlatee: " + listingValid.username);
             var tempMatch = await matchList.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
+            var makeCompleteUserInfo = new extensiveUserInfo({
+                listing: doc,
+                accountUser: listingValid
+            })
             if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
             {
                 console.log(doc._id);
-                tempList.push(doc);
+                tempList.push(makeCompleteUserInfo);
             }
             else if (doc._id == tempMatch._id)
             {
                 if (tempMatch.matchState == 'flatee-pending')
                 {
-                    tempList.push(doc);
+                    tempList.push(makeCompleteUserInfo);
                 }
             }   
         }
@@ -66,6 +71,7 @@ async function getPotentialMatchesForFlatee(flateeParam) {
 
     //if flat hasnt appeared user's matchlist
     //if flat appears on user's matchlist, but matchState == "flatee-pending"
+    tempList.sort(function(a, b){return 0.5 - Math.random()});
 
     return tempList; //a card is not repeated and only show flats that swiped right/haven't swiped on flattee
 }
@@ -134,6 +140,7 @@ async function getPotentialMatchesForListing(flatParam) {
 
     //if flatee hasnt appeared user's matchlist
     //if flatee appears on user's matchlist, but matchState == "list-pending"
+    tempList.sort(function(a, b){return 0.5 - Math.random()});
 
     return tempList; //a card is not repeated and only show flatees that swiped right on flat
 }
