@@ -49,6 +49,7 @@ async function getPotentialMatchesForFlatee(flateeParam) {
         else
         {
             console.log("getPotentialMatchesForFlatee: " + listingValid.username);
+            console.log("cost: " + doc.rent);
             var tempMatch = await matchList.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
             var makeCompleteUserInfo = new extensiveUserInfo({
                 listing: doc,
