@@ -52,6 +52,7 @@ async function create(userParam) {
 async function update(id, userParam) {
     const user = await User.findById(id);
 
+    console.log("userParams are "+userParam.body);
     // validate
     if (!user) throw 'User not found';
     if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
@@ -63,10 +64,11 @@ async function update(id, userParam) {
         userParam.hash = bcrypt.hashSync(userParam.password, 10);
     }
 
+    console.log(userParam.body);
     // copy userParam properties to user
-    Object.assign(user, userParam);
+    Object.assign(user, userParam.body);
 
-    await user.save();
+    return await user.save();
 }
 
 async function _delete(id) {
