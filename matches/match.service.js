@@ -38,6 +38,7 @@ async function getSuccessMatchesForListing(listParam) {
 async function getPotentialMatchesForFlatee(flateeParam) { 
 
     var cursor = listings.find({}).cursor();
+    var currentFlatee = await users.findOne({ username: flateeParam.flateeUsername });
     var tempList = [];
     for (var doc = await cursor.next(); doc != null; doc = await cursor.next()) 
     {
@@ -48,8 +49,6 @@ async function getPotentialMatchesForFlatee(flateeParam) {
         }
         else
         {
-            console.log("getPotentialMatchesForFlatee: " + listingValid.username);
-            console.log("cost: " + doc.rent);
             var tempMatch = await matchList.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
             var makeCompleteUserInfo = new extensiveUserInfo({
                 listing: doc,
@@ -57,14 +56,31 @@ async function getPotentialMatchesForFlatee(flateeParam) {
             })
             if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
             {
-                console.log(doc._id);
-                tempList.push(makeCompleteUserInfo);
+                console.log("min: "+currentFlatee.checklist.priceRange.min);
+                console.log("max: "+currentFlatee.checklist.priceRange.max);
+                if (doc.rent >= currentFlatee.checklist.priceRange.min && 
+                    doc.rent <= currentFlatee.checklist.priceRange.max &&
+                    currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
+                {
+                    console.log("getPotentialMatchesForFlatee: " + listingValid.username);
+                    console.log("rent: " + doc.rent);
+                    tempList.push(makeCompleteUserInfo);
+                } //filter automatically (price and location)
             }
             else if (doc._id == tempMatch._id)
             {
                 if (tempMatch.matchState == 'flatee-pending')
                 {
-                    tempList.push(makeCompleteUserInfo);
+                    console.log("min: "+currentFlatee.checklist.priceRange.min);
+                    console.log("max: "+currentFlatee.checklist.priceRange.max);
+                    if (doc.rent >= currentFlatee.checklist.priceRange.min && 
+                        doc.rent <= currentFlatee.checklist.priceRange.max &&
+                        currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
+                    {
+                        console.log("getPotentialMatchesForFlatee: " + listingValid.username);
+                        console.log("rent: " + doc.rent);
+                        tempList.push(makeCompleteUserInfo);
+                    } //filter automatically (price and location)
                 }
             }   
         }
@@ -165,7 +181,7 @@ async function addListing(matchParam) {
         match = new matchList(matchParam);
     }
 
-    //if flat hasnt swiped right on flattee, match.matchState = 'flat-pending';
+    //if flat hasnt swiped right on flattee, match.matchState = 'list-pending';
     //if flat swiped right on flattee, match.matchState = 'matched';
     //if flat swiped left on flattee, the card shouldn't have appeared in flattee's page;
 
@@ -192,7 +208,7 @@ async function addFlatee(matchParam) {
         match = new matchList(matchParam);
     }
 
-    //if flatee hasnt swiped right on flat, match.matchState = 'flat-pending';
+    //if flatee hasnt swiped right on flat, match.matchState = 'flatee-pending';
     //if flatee swiped right on flat, match.matchState = 'matched';
     //if flatee swiped left on flat the card shouldn't have appeared in flattee's page;
 
