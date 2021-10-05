@@ -52,21 +52,27 @@ async function create(userParam) {
 async function update(id, userParam) {
     const user = await User.findById(id);
 
-    console.log("userParams are "+userParam.body);
+    console.log("userParams are fuck"+userParam.body);
+
     // validate
     if (!user) throw 'User not found';
     if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
         throw 'Username "' + userParam.username + '" is already taken';
     }
 
-    // hash password if it was entered
-    if (userParam.password) {
-        userParam.hash = bcrypt.hashSync(userParam.password, 10);
-    }
-
     console.log(userParam.body);
+
     // copy userParam properties to user
     Object.assign(user, userParam.body);
+
+    // hash password if it was entered
+    if (userParam.body.password) {
+        console.log('Update password...');
+        user.hash = bcrypt.hashSync(userParam.body.password, 10);
+        console.log('hash pw is...',user.hash);
+    }
+
+    console.log('user data is', user);
 
     return await user.save();
 }
