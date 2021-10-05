@@ -8,6 +8,7 @@ module.exports = {
     getAll,
     getOwned,
     getById,
+    getFlatAccount,
     addListing,
     update,
     delete: _delete
@@ -27,6 +28,11 @@ async function getOwned(id) {
 //Find and return the specified listing from the database
 async function getById(id) {
     return await Listing.findById(id);
+}
+
+async function getFlatAccount(id) {
+  const listing = await Listing.findById(id);
+  return await User.findById(listing.data.flat_id);
 }
 
 //Create a new listing from the provided parameters, save it to the database and return

@@ -9,6 +9,7 @@ router.post('/add', authorize(Role.Flat), addListing)
 router.get('/flat/:id', authorize(Role.Flat), getOwned);
 router.get('/all', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
+router.get('/flatAccount/:id', authorize(), getFlatAccount);
 router.put('/:id', authorize(Role.Flat), update);
 router.delete('/:id', authorize(Role.Flat), _delete);
 
@@ -36,6 +37,11 @@ function getById(req, res, next) {
         .catch(err => next(err));
 }
 
+function getFlatAccount(req, res, next) {
+  listingService.getFlatAccount(req.params.id)
+      .then(user => user ? res.json(user) : res.sendStatus(404))
+      .catch(err => next(err));
+}
 
 //Will look at adding role/account checks in a future release, if necessary
 function update(req, res, next) {

@@ -17,6 +17,7 @@ module.exports = {
     addListing,
     addFlatee,
     unmatch,
+    findFlatee,
     delete: _delete
 };
 
@@ -25,13 +26,14 @@ async function getAll() {
 }
 
 //this shows all profiles that the current profile has successfully matched with (for chat purposes)
-async function getSuccessMatchesForFlatee(flateeParam) {
-    return await matchList.find({ flateeUsername: flateeParam.flateeUsername, matchState: 'matched' });
+async function getSuccessMatchesForFlatee(id) {
+    let user = await users.findById(id);
+    return await matchList.find({ flateeUsername: user.username, matchState: 'matched' });
 }
 
 //this shows all profiles that the current profile has successfully matched with (for chat purposes)
-async function getSuccessMatchesForListing(listParam) {
-    return await matchList.find({ listingID: listParam.listingID, matchState: 'matched' });
+async function getSuccessMatchesForListing(id) {
+    return await matchList.find({ listingID: id, matchState: 'matched' });
 }
 
 //appears as cards on main page for swiping 
@@ -229,6 +231,10 @@ async function unmatch(matchParam) {
     match.matchState = 'no-match';
 
     await match.save();
+}
+
+async function findFlatee(flateeParam) {
+  return await users.findOne({ username: flateeParam.username });
 }
 
 async function _delete(id) {
