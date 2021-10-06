@@ -31,6 +31,7 @@ async function getById(id) {
     return await Listing.findById(id);
 }
 
+//Find the flat account that owns the specified listing
 async function getFlatAccount(id) {
   const listing = await Listing.findById(id);
   const user = await User.findById(listing.flat_id);
