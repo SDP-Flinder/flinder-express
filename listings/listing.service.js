@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
 const Listing = db.Listing;
+const User = db.User;
 
 module.exports = {
     getAll,
@@ -32,7 +33,8 @@ async function getById(id) {
 
 async function getFlatAccount(id) {
   const listing = await Listing.findById(id);
-  return await User.findById(listing.data.flat_id);
+  const user = await User.findById(listing.flat_id);
+  return user;
 }
 
 //Create a new listing from the provided parameters, save it to the database and return
