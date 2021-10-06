@@ -233,8 +233,9 @@ async function unmatch(matchParam) {
     await match.save();
 }
 
-async function findFlatee(flateeParam) {
-  return await users.findOne({ username: flateeParam.username });
+async function findFlatee(id) {
+  let match = await matchList.findById(id);
+  return await users.findOne({ username: match.flateeUsername });
 }
 
 async function _delete(id) {

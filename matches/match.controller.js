@@ -14,7 +14,7 @@ router.get('/potentialmatchesForListing', authorize(), getPotentialMatchesForLis
 router.post('/addListing', authorize(), addListing);
 router.post('/addFlatee', authorize(), addFlatee);
 router.put('/unmatch', authorize(), unmatch);
-router.get('/findFlatee', authorize(), findFlatee);
+router.get('/findFlatee/:id', authorize(), findFlatee);
 router.delete('/:id', authorize(), _delete);
 
 module.exports = router;
@@ -81,7 +81,7 @@ function unmatch(req, res, next) {
 
 function findFlatee(req, res, next) {
 
-  matchService.findFlatee(req.body)
+  matchService.findFlatee(req.params.id)
       .then(user => user ? res.json(user) : res.sendStatus(404))
       .catch(err => next(err));
 }
