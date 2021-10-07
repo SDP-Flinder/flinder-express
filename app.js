@@ -1,20 +1,42 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('rootpath')();
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const errorHandler = require('./_helpers/error-handler');
+const {authorize, blacklist} = require('./_helpers/authorize');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cors());
 
-var app = express();
+// API routes
+app.use('/users', require('./users/user.controller'));
+app.use('/flats', require('./flats/flat.controller'));
+app.use('/matches', require('./matches/match.controller'));
+app.use('/listings', require('./listings/listing.controller'));
+app.use('/locations', require('./locations/location.controller'));
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.get('/logout', authorize(), logout);
+// app.get('/login', login);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+function logout(req, res, next) {
+  blacklist(req, res)
+    // .then((msg) => res.json({message: msg}))
+    // .catch(err => next(err));
+}
+
+// Global error handler
+app.use(errorHandler);
+// Handle errors.
+app.use(function(req, res, next) {
+  res.status(404);
+  res.json({ error: 'endpoint-not-found'});
+});
+
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({ error: err });
+});
 
 module.exports = app;
