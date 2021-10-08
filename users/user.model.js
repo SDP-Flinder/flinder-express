@@ -29,6 +29,7 @@ const UserSchema = new Schema({
     }},
   description: {type: String},
   existingFlatmates: { type: Number},
+  leaseDate: {type: Date},
 
   //This is for the flatee accounts
   preferredArea: {type: Object,
