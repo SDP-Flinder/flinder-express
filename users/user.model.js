@@ -29,6 +29,11 @@ const UserSchema = new Schema({
     }},
   description: {type: String},
   existingFlatmates: { type: Number},
+  flatRules: { type: Object,
+    properties: {
+      smoking: { type: Boolean },
+      pets: { type: Boolean },
+    }},
 
   //This is for the flatee accounts
   preferredArea: {type: Object,
