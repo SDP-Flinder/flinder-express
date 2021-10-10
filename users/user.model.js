@@ -59,6 +59,7 @@ const UserSchema = new Schema({
   },
 
   bio: { type: String },
+  rentUnits: {type: String},
 });
 
 UserSchema.set('toJSON', {
