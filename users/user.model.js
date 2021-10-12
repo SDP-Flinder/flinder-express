@@ -29,6 +29,7 @@ const UserSchema = new Schema({
     }},
   description: {type: String},
   existingFlatmates: { type: Number},
+  leaseDate: {type: Date},
   flatRules: { type: Object,
     properties: {
       smoking: { type: Boolean },
@@ -63,6 +64,7 @@ const UserSchema = new Schema({
   },
 
   bio: { type: String },
+  rentUnits: {type: String},
 });
 
 UserSchema.set('toJSON', {
