@@ -6,8 +6,9 @@ const matchListSchema = new Schema({
     flateeID: { type: String },
     listingUsername: { type: String },
     listingID: { type: String },
-    matchedDate: { type: Date, default: null }, //only when matchState is 'matched', then update the matchedDate from null
-    //to Date.now
+    // Only when matchState is 'matched', 
+    // then update the matchedDate from null to Date.now
+    matchedDate: { type: Date, default: null }, 
     matchState: { type: String, enum: ['no-match', 'flatee-pending', 'list-pending', 'matched'], default: 'no-match' },
 });
 
