@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const matchListSchema = new Schema({
     flateeUsername: { type: String },
+    flateeID: { type: String },
+    listingUsername: { type: String },
     listingID: { type: String },
     matchedDate: { type: Date, default: null }, //only when matchState is 'matched', then update the matchedDate from null
     //to Date.now
