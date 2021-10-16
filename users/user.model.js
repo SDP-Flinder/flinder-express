@@ -30,6 +30,11 @@ const UserSchema = new Schema({
   description: {type: String},
   existingFlatmates: { type: Number},
   leaseDate: {type: Date},
+  flatRules: { type: Object,
+    properties: {
+      smoking: { type: Boolean },
+      pets: { type: Boolean },
+    }},
 
   //This is for the flatee accounts
   preferredArea: {type: Object,
