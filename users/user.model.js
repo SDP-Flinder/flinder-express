@@ -38,7 +38,7 @@ const UserSchema = new Schema({
         type: String,
       },
       suburb: {
-        type: [String],
+        type: String,
       },
     }
   },

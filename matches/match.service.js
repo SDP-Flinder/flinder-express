@@ -56,8 +56,6 @@ async function getPotentialMatchesForFlatee(flateeParam) {
             })
             if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
             {
-                console.log("min: "+currentFlatee.checklist.priceRange.min);
-                console.log("max: "+currentFlatee.checklist.priceRange.max);
                 if (doc.rent >= currentFlatee.checklist.priceRange.min && 
                     doc.rent <= currentFlatee.checklist.priceRange.max &&
                     currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
@@ -71,8 +69,6 @@ async function getPotentialMatchesForFlatee(flateeParam) {
             {
                 if (tempMatch.matchState == 'flatee-pending')
                 {
-                    console.log("min: "+currentFlatee.checklist.priceRange.min);
-                    console.log("max: "+currentFlatee.checklist.priceRange.max);
                     if (doc.rent >= currentFlatee.checklist.priceRange.min && 
                         doc.rent <= currentFlatee.checklist.priceRange.max &&
                         currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
@@ -142,12 +138,14 @@ async function getPotentialMatchesForListing(flatParam) {
             var tempMatch = await matchList.findOne({ flateeUsername: doc.username, listingID: flatParam.listingID });
             if (tempMatch == null)
             {
+                console.log(doc.username);
                 continue;
             }
             else if (doc.username == tempMatch.flateeUsername) //only flatees that have swiped right will be shown
             {
                 if (tempMatch.matchState == 'list-pending')
                 {
+                    console.log(tempMatch.flateeUsername);
                     tempList.push(doc);
                 }
             }
@@ -186,7 +184,7 @@ async function addListing(matchParam) {
     //if flat swiped left on flattee, the card shouldn't have appeared in flattee's page;
 
     // save match
-    await match.save();
+    return await match.save();
 }
 
 //allows current flat to add potential flatee to list 
@@ -213,7 +211,7 @@ async function addFlatee(matchParam) {
     //if flatee swiped left on flat the card shouldn't have appeared in flattee's page;
 
     // save match
-    await match.save();
+    return await match.save();
 }
 
 //this is invoked when one side of the two already matched profiles decide to unmatch; removes the opposite profile off
@@ -228,7 +226,7 @@ async function unmatch(matchParam) {
     }
     match.matchState = 'no-match';
 
-    await match.save();
+    return await match.save();
 }
 
 async function _delete(id) {
