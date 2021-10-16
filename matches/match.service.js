@@ -58,6 +58,50 @@ async function getPotentialMatchesForFlatee(flateeParam) {
             })
             if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
             {
+                //perform calculations on this listing's and this flatee's rent to see if they are compatible for
+                //potential swiping
+                var tempListingRentPrice = doc.rent;
+                var tempFlateeRentPriceMin = 0;
+                var tempFlateeRentPriceMax = 0;
+                if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Week') ||
+                    (doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Fortnight') ||
+                    (doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Month'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max;
+                }
+                else if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Fortnight'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/2;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/2;
+                }
+                else if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Month'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/4;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/4;
+                }
+                else if ((doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Week'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*2;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*2;
+                }
+                else if ((doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Month'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/2;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/2;
+                }
+                else if ((doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Week'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*4;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*4;
+                }
+                else if ((doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Fortnight'))
+                {
+                    tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*2;
+                    tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*2;
+                }
+
+                //make variable changes down below
                 if (doc.rent >= currentFlatee.checklist.priceRange.min && 
                     doc.rent <= currentFlatee.checklist.priceRange.max &&
                     currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
