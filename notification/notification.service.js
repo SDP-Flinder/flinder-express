@@ -15,13 +15,14 @@ module.exports = {
  * @returns array of json notification objects
  */
 async function getAllUsersNotifications(userID) {
-    let user = await dbuser.findById(notificationParams.userID)
-    if (user) { // Check if user defined
+    let user = await dbuser.findById(userID)
+
+    if (user !== null) { // Check if user defined
         if (user.receiveNotifications) { // Check if user wants to receive notifications
             return await dbnotification.find({ userID: userID, read: false });
         }
     } else {
-        throw 'user-' + notificationParams.userID + '-not-found';
+        throw 'user-' + userID + '-not-found';
     }
 }
 
