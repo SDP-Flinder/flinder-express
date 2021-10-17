@@ -12,7 +12,6 @@ module.exports = {
     getSuccessMatchesForFlatee,
     getSuccessMatchesForListing,
     getPotentialMatchesForFlatee,
-    getPotentialFlatAccountsForFlatee,
     getPotentialMatchesForListing,
     addListing,
     addFlatee,
@@ -56,33 +55,86 @@ async function getPotentialMatchesForFlatee(flateeParam) {
                 listing: doc,
                 accountUser: listingValid
             })
+            var leaseValid = (new Date(listingValid.leaseDate) > new Date()); // check if listing lease is valid
+            var tempListingRentPrice = doc.rent;
+            var tempFlateeRentPriceMin = 0;
+            var tempFlateeRentPriceMax = 0;
+            var breachedFlatRules = false;
+            //filter out profiles with incompatible smoking habits or has pets, if listing doesn't allow
+            if (listingValid.flatRules != null)
+            {
+                if (listingValid.flatRules.smoking == false && currentFlatee.checklist.isSmoker == true)
+                {
+                    breachedFlatRules = true;
+                }
+                if (listingValid.flatRules.pets == false && currentFlatee.checklist.hasPet == true)
+                {
+                    breachedFlatRules = true;
+                }
+            }
+
+            //perform calculations on this listing's and this flatee's rent to see if they are compatible for
+            //potential swiping
+            if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Week') ||
+            (doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Fortnight') ||
+            (doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Month'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max;
+            }
+            else if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Fortnight'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/2;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/2;
+            }
+            else if ((doc.rentUnits == 'Per Week' && currentFlatee.rentUnits == 'Per Month'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/4;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/4;
+            }
+            else if ((doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Week'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*2;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*2;
+            }
+            else if ((doc.rentUnits == 'Per Fortnight' && currentFlatee.rentUnits == 'Per Month'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min/2;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max/2;
+            }
+            else if ((doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Week'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*4;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*4;
+            }
+            else if ((doc.rentUnits == 'Per Month' && currentFlatee.rentUnits == 'Per Fortnight'))
+            {
+                tempFlateeRentPriceMin = currentFlatee.checklist.priceRange.min*2;
+                tempFlateeRentPriceMax = currentFlatee.checklist.priceRange.max*2;
+            }
             if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
             {
-                console.log("min: "+currentFlatee.checklist.priceRange.min);
-                console.log("max: "+currentFlatee.checklist.priceRange.max);
-                if (doc.rent >= currentFlatee.checklist.priceRange.min && 
-                    doc.rent <= currentFlatee.checklist.priceRange.max &&
-                    currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
+                //perform filtering based on pricing compatibility and location
+                if (tempListingRentPrice >= tempFlateeRentPriceMin && 
+                    tempListingRentPrice <= tempFlateeRentPriceMax &&
+                    currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb) &&
+                    !breachedFlatRules && leaseValid)
                 {
-                    console.log("getPotentialMatchesForFlatee: " + listingValid.username);
-                    console.log("rent: " + doc.rent);
                     tempList.push(makeCompleteUserInfo);
-                } //filter automatically (price and location)
+                }
             }
             else if (doc._id == tempMatch._id)
             {
                 if (tempMatch.matchState == 'flatee-pending')
                 {
-                    console.log("min: "+currentFlatee.checklist.priceRange.min);
-                    console.log("max: "+currentFlatee.checklist.priceRange.max);
-                    if (doc.rent >= currentFlatee.checklist.priceRange.min && 
-                        doc.rent <= currentFlatee.checklist.priceRange.max &&
-                        currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb))
+                    //perform filtering based on pricing compatibility and location
+                    if (tempListingRentPrice >= tempFlateeRentPriceMin && 
+                        tempListingRentPrice <= tempFlateeRentPriceMax &&
+                        currentFlatee.preferredArea.suburb.includes(listingValid.address.suburb) &&
+                        !breachedFlatRules && leaseValid)
                     {
-                        console.log("getPotentialMatchesForFlatee: " + listingValid.username);
-                        console.log("rent: " + doc.rent);
                         tempList.push(makeCompleteUserInfo);
-                    } //filter automatically (price and location)
+                    }
                 }
             }   
         }
@@ -91,43 +143,6 @@ async function getPotentialMatchesForFlatee(flateeParam) {
     //if flat hasnt appeared user's matchlist
     //if flat appears on user's matchlist, but matchState == "flatee-pending"
     tempList.sort(function(a, b){return 0.5 - Math.random()});
-
-    return tempList; //a card is not repeated and only show flats that swiped right/haven't swiped on flattee
-}
-
-//appears as cards on main page for swiping 
-async function getPotentialFlatAccountsForFlatee(flateeParam) { 
-
-    var cursor = listings.find({}).cursor();
-    var tempList = [];
-    for (var doc = await cursor.next(); doc != null; doc = await cursor.next()) 
-    {
-        var listingValid = await users.findOne({ _id: doc.flat_id });
-        if (listingValid == null)
-        {
-            continue;
-        }
-        else
-        {
-            console.log("getPotentialFlatAccountsForFlatee: " + listingValid.username);
-            var tempMatch = await matchList.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
-            if (tempMatch == null) //when the current flat we're looking at isn't in the current flatee's matchList
-            {
-                console.log(doc._id);
-                tempList.push(listingValid);
-            }
-            else if (doc._id == tempMatch._id)
-            {
-                if (tempMatch.matchState == 'flatee-pending')
-                {
-                    tempList.push(listingValid);
-                }
-            }   
-        }
-    }
-
-    //if flat hasnt appeared user's matchlist
-    //if flat appears on user's matchlist, but matchState == "flatee-pending"
 
     return tempList; //a card is not repeated and only show flats that swiped right/haven't swiped on flattee
 }
@@ -144,12 +159,31 @@ async function getPotentialMatchesForListing(flatParam) {
             var tempMatch = await matchList.findOne({ flateeUsername: doc.username, listingID: flatParam.listingID });
             if (tempMatch == null)
             {
+                console.log(doc.username);
                 continue;
             }
             else if (doc.username == tempMatch.flateeUsername) //only flatees that have swiped right will be shown
             {
-                if (tempMatch.matchState == 'list-pending')
+                var listing = await listings.findOne({ _id: flatParam.listingID });
+                var listingValid = await users.findOne({ _id: listing.flat_id });
+                var breachedFlatRules = false;
+
+                //filter out profiles with incompatible smoking habits or has pets, if listing doesn't allow.
+                //this filter is here just in case some profiles have changed their habits after swiping
+                if (listingValid.flatRules != null)
                 {
+                    if (listingValid.flatRules.smoking == false && doc.checklist.isSmoker == true)
+                    {
+                        breachedFlatRules = true;
+                    }
+                    if (listingValid.flatRules.pets == false && doc.checklist.hasPet == true)
+                    {
+                        breachedFlatRules = true;
+                    }
+                }
+                if (tempMatch.matchState == 'list-pending' && !breachedFlatRules)
+                {
+                    console.log(tempMatch.flateeUsername);
                     tempList.push(doc);
                 }
             }
@@ -188,7 +222,7 @@ async function addListing(matchParam) {
     //if flat swiped left on flattee, the card shouldn't have appeared in flattee's page;
 
     // save match
-    await match.save();
+    return await match.save();
 }
 
 //allows current flat to add potential flatee to list 
@@ -215,7 +249,7 @@ async function addFlatee(matchParam) {
     //if flatee swiped left on flat the card shouldn't have appeared in flattee's page;
 
     // save match
-    await match.save();
+    return await match.save();
 }
 
 //this is invoked when one side of the two already matched profiles decide to unmatch; removes the opposite profile off
@@ -230,7 +264,7 @@ async function unmatch(matchParam) {
     }
     match.matchState = 'no-match';
 
-    await match.save();
+    return await match.save();
 }
 
 async function findFlatee(id) {
