@@ -60,10 +60,10 @@ function update(req, res, next) {
     const currentUser = req.user;
     const id = req.params.id;
 
-    // // only allow admins to access other user records
-    // if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
-    //     return res.status(401).json({ message: 'Unauthorized' });
-    // }
+    // only allow admins to access other user records
+    if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
 
     userService.update(req.params.id, req)
         .then(user => user ? res.json(user) : res.sendStatus(404))
