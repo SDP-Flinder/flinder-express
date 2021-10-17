@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   dob: {type: Date, required: true},
   createdDate: { type: Date, default: Date.now },
   role: {type: String, enum: ['admin', 'flat', 'flatee'], default: 'flatee'},
-  
+  receiveNotifications: {type: Boolean, default: true},
+
   //This is for accounts type flat
   address: { type: Object,
     properties:{

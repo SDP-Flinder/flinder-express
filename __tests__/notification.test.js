@@ -1,101 +1,119 @@
 const request = require('supertest');
 const app = require('../app');
 const {MongoClient} = require('mongodb');
+let token;
 
-var token = null;
-
-beforeAll(() => {
-    request(app).post('/users/authenticate').send({ 
-        username: "admin", 
-        password: "admin"
+beforeAll((done) => {
+    request(app)
+    .post('/users/authenticate')
+    .send({
+        username: 'admin',
+        password: 'admin',
     })
-    .then(response => {
-        token = response.body.token; 
+    .end((err, response) => {
+        token = response.body.token; // save the token!
         done();
     });
-  });
+});
+
+async function setReceiveNotification(state) {
+    await request(app)
+    .put(`/users/${token.sub}`)
+    .send({
+        receiveNotifications: state
+    })
+    .end((err, response) => {
+        return response.body; // save the token!
+        done();
+    });
+}
+
+async function postNotification(title, message) {
+    await request(app)
+    .post('/notification')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+        userID: token.sub,
+        title: title,
+        message: message,
+    })
+    .end((err, response) => {
+        return response.body; // save the token!
+        done();
+    });
+}
 
 describe("POST /notification", () => {
+    // token not being sent - should respond with a 401
+    test('It should require authorization', () => {
+        return request(app)
+            .post('/notification')
+            .send({
+                userID: token.sub,
+                title: 'Notification Title',
+                message: 'Notification Message',
+            })
+            .then((response) => {
+                expect(response.statusCode).toBe(401);
+            });
+      });
 
-    it('check token', function(done) {
-        request(app)
-          .get('/user')
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200, done);
-    });
-
-    it('respond with 200, message', function(done) {
-        request(app)
+   // send the token - should respond with a 200
+   test('It responds with JSON', () => {
+    return request(app)
         .post('/notification')
-        .send({title: 'Title', message: 'Message'})
-        .set('Authorization', 'Bearer ' + token)
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end(function(err, res) {
-            if (err) return done(err);
-            return done();
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+            userID: token.sub,
+            title: 'Notification Title',
+            message: 'Notification Message',
+        })
+        .then((response) => {
+            expect(response.statusCode).toBe(200);
+            expect(response.type).toBe('application/json');
+            expect(response.body.message).toBe('success-notification-added');
         });
     });
 });
 
-describe("GET /notification", () => {
-    it('check token', function(done) {
-        request(app)
-          .get('/user')
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200, done);
+describe('GET /notification', () => {
+    // token not being sent - should respond with a 401
+    test('It should require authorization', () => {
+        return request(app)
+            .get('/notification')
+            .then((response) => {
+            expect(response.statusCode).toBe(401);
+        });
     });
 
-    it('get notifications', function(done) {
-        request(app)
-          .get('/notification')
-          .set('Authorization', 'Bearer ' + token)
-          .expect('Content-Type', /json/)
-          .expect(200, done);
-    });
-});
+    // Make sure user is receiving notifications
+    setReceiveNotification(true);
 
-describe("PUT /notification", () => {
-    it('check token', function(done) {
-        request(app)
-          .get('/user')
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200, done);
-    });
+    // Make sure user is has a notification
+    postNotification("Test", "Just making sure you have a notification")
 
-    it('get notifications', function(done) {
-        request(app)
-          .put('/notification')
-          .set('Authorization', 'Bearer ' + token)
-          .send({read: true})
-          .expect('Content-Type', /json/)
-          .expect(200, done);
-    });
-});
-
-describe("DELETE /notification", () => {
-    it('check token', function(done) {
-        request(app)
-          .get('/user')
-          .set('Authorization', 'Bearer ' + token)
-          .expect(200, done);
+    // send the token - should respond with a 200
+    test('It responds with JSON', () => {
+        return request(app)
+            .get('/notification')
+            .set('Authorization', `Bearer ${token}`)
+            .then((response) => {
+            expect(response.statusCode).toBe(200);
+            expect(response.type).toBe('application/json');
+        });
     });
 
-    var notificationID = 0;
+    // Make sure user is NOT receiving notifications
+    setReceiveNotification(false);
 
-    it('get notifications', function(done) {
-        request(app)
-          .get('/notification')
-          .set('Authorization', 'Bearer ' + token)
-          .expect('Content-Type', /json/)
-          .expect(200, done);
-    });
-
-    it('delete notification `$notificationID`', function(done) {
-        request(app)
-          .delete('/notification/')
-          .set('Authorization', 'Bearer ' + token)
-          .expect('Content-Type', /json/)
-          .expect(200, done);
+    test('It responds with empty array', () => {
+        return request(app)
+            .get('/notification')
+            .set('Authorization', `Bearer ${token}`)
+            .then((response) => {
+            expect(response.statusCode).toBe(200);
+            expect(response.type).toBe('application/json');
+            expect(response.body).toHaveLength(0);
+        });
     });
 });

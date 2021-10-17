@@ -1,8 +1,6 @@
-const config = require('../config.json');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
-const Notification = db.User;
+const dbnotification = db.Notification;
+const dbuser = db.User;
 
 module.exports = {
     getAllUsersNotifications,
@@ -11,49 +9,44 @@ module.exports = {
     delete: _delete
 };
 
+/**
+ * 
+ * @param {*} userID 
+ * @returns array of json notification objects
+ */
 async function getAllUsersNotifications(userID) {
-    return await Notification.find({ userID: userID, read: false });
+    return await dbnotification.find({ userID: userID, read: false });
 }
 
+/**
+ * Adds a new notification given userID, title, message to db
+ * @param {*} notificationParams 
+ */
 async function addNotification(notificationParams) {
-    // validate
-    if (await User.findOne({ username: userParam.username })) {
-        throw 'username-"' + userParam.username + '"-taken';
+    // validate if user exists given id
+    if (!await dbuser.findById(notificationParams.userID)) {
+        throw 'user-' + notificationParams.userID + '-not-found';
     }
 
-    const user = new User(userParam);
+    const notification = new dbnotification(notificationParams);
 
-    // hash password
-    if (userParam.password) {
-        user.hash = bcrypt.hashSync(userParam.password, 10);
-    }
-
-    // save user
-    await user.save();
+    await notification.save();
 }
 
+/**
+ * Given an id, updates the notifications read status to true in the db
+ * @param {*} id 
+ * @returns 
+ */
 async function read(id) {
-    const user = await User.findById(id);
+    const notification = await dbnotification.findById(id);
+    if (!notification) throw 'notification-not-found';
 
-    console.log("userParams are "+userParam.body);
-    // validate
-    if (!user) throw 'User not found';
-    if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
-        throw 'Username "' + userParam.username + '" is already taken';
-    }
+    notification.read = true;
 
-    // hash password if it was entered
-    if (userParam.password) {
-        userParam.hash = bcrypt.hashSync(userParam.password, 10);
-    }
-
-    console.log(userParam.body);
-    // copy userParam properties to user
-    Object.assign(user, userParam.body);
-
-    return await user.save();
+    return await notification.save();
 }
 
 async function _delete(id) {
-    await Notification.findByIdAndRemove(id);
+    await dbnotification.findByIdAndRemove(id);
 }
