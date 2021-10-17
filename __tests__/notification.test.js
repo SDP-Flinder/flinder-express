@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const {MongoClient} = require('mongodb');
 let token;
-let userID = token.sub;
+let userID;
 
 beforeAll((done) => {
     request(app)
@@ -13,6 +13,7 @@ beforeAll((done) => {
     })
     .end((err, response) => {
         token = response.body.token; // save the token!
+        userID = response.body.id;
         done();
     });
 });
@@ -81,8 +82,8 @@ describe('GET /notification', () => {
     // token not being sent - should respond with a 401
     test('It should require authorization', () => {
         return request(app)
-            .get('/notification')
-            .then((response) => {
+        .get('/notification')
+        .then((response) => {
             expect(response.statusCode).toBe(401);
         });
     });
@@ -96,9 +97,9 @@ describe('GET /notification', () => {
     // send the token - should respond with a 200
     test('It responds with JSON', () => {
         return request(app)
-            .get('/notification')
-            .set('Authorization', `Bearer ${token}`)
-            .then((response) => {
+        .get('/notification')
+        .set('Authorization', `Bearer ${token}`)
+        .then((response) => {
             expect(response.statusCode).toBe(200);
             expect(response.type).toBe('application/json');
         });
@@ -109,9 +110,9 @@ describe('GET /notification', () => {
 
     test('It responds with empty array', () => {
         return request(app)
-            .get('/notification')
-            .set('Authorization', `Bearer ${token}`)
-            .then((response) => {
+        .get('/notification')
+        .set('Authorization', `Bearer ${token}`)
+        .then((response) => {
             expect(response.statusCode).toBe(200);
             expect(response.type).toBe('application/json');
             expect(response.body).toHaveLength(0);
