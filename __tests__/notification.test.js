@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 const {MongoClient} = require('mongodb');
 let token;
+let userID = token.sub;
 
 beforeAll((done) => {
     request(app)
@@ -18,7 +19,7 @@ beforeAll((done) => {
 
 async function setReceiveNotification(state) {
     await request(app)
-    .put(`/users/${token.sub}`)
+    .put(`/users/${userID}`)
     .send({
         receiveNotifications: state
     })
@@ -33,7 +34,7 @@ async function postNotification(title, message) {
     .post('/notification')
     .set('Authorization', `Bearer ${token}`)
     .send({
-        userID: token.sub,
+        userID: userID,
         title: title,
         message: message,
     })
@@ -64,7 +65,7 @@ describe("POST /notification", () => {
         .post('/notification')
         .set('Authorization', `Bearer ${token}`)
         .send({
-            userID: token.sub,
+            userID: userID,
             title: 'Notification Title',
             message: 'Notification Message',
         })

@@ -5,6 +5,7 @@ const notificationSchema = new Schema({
     userID: { type: String, required: true },
     title: { type: String, required: true },
     message: { type: String, required: true },
+    link: {type: String },
     date: { type: Date, default: Date.now },
     read: { type: Boolean, default: false },
 });
