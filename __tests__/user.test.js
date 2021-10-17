@@ -110,7 +110,52 @@ describe("POST /users", () => {
         });
     });
 
-  });
+});
+
+async function getToken(userID) {
+    await request(app)
+    .post('/users/authenticate')
+    .send({
+        username: 'admin',
+        password: 'admin',
+    })
+    .end((err, response) => {
+        return response.body.token; // save the token!
+        done();
+    });
+}
+
+describe("PUT /users", () => {
+    let token = getToken();
+
+    test('change notification preference to false', () => {
+        return request(app)
+            .put(`/users/${token.sub}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                receiveNotifications: false,
+            })
+            .then((response) => {
+                expect(response.statusCode).toBe(200);
+                expect(response.type).toBe('application/json');
+                expect(response.body.receiveNotifications).toBe(false);
+            });
+    });
+
+    test('change notification preference to true', () => {
+        return request(app)
+            .put(`/users/${token.sub}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                receiveNotifications: true,
+            })
+            .then((response) => {
+                expect(response.statusCode).toBe(200);
+                expect(response.type).toBe('application/json');
+                expect(response.body.receiveNotifications).toBe(true);
+            });
+      });
+});
 
 
 // >>> Keep me around <<<
