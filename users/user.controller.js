@@ -90,10 +90,10 @@ function updatePhoto(req, res, next) {
     console.log(photo);
     const id = req.params.id;
 
-    // // only allow admins to access other user records
-    // if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
-    //     return res.status(401).json({ message: 'Unauthorized' });
-    // }
+    // only allow admins to access other user records
+    if (id !== currentUser.sub && currentUser.role !== Role.Admin) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
 
     userService.updatePhoto(req.params.id, req)
         .then(user => user ? res.json(user) : res.sendStatus(404))
