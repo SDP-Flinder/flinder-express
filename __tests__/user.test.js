@@ -144,17 +144,17 @@ describe("PUT /users", () => {
 
     test('change notification preference to true', () => {
         return request(app)
-            .put(`/users/${token.sub}`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                receiveNotifications: true,
-            })
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(response.type).toBe('application/json');
-                expect(response.body.receiveNotifications).toBe(true);
-            });
-      });
+        .put(`/users/${token.sub}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+            receiveNotifications: true,
+        })
+        .then((response) => {
+            expect(response.statusCode).toBe(200);
+            expect(response.type).toBe('application/json');
+            expect(response.body.receiveNotifications).toBe(true);
+        });
+    });
 });
 
 
