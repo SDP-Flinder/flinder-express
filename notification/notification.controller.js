@@ -13,7 +13,7 @@ module.exports = router;
 
 function getAllUsersNotifications(req, res, next) {
     notificationService.getAllUsersNotifications(req.user.sub)
-        .then(notifications => res.json(notifications))
+        .then(notifications => notifications ? res.json(notifications) : res.json([]))
         .catch(err => next(err));
 }
 
