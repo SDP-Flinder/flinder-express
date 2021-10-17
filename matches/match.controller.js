@@ -9,7 +9,6 @@ router.get('/', authorize(), getAll);
 router.get('/getSuccessMatchesForFlatee/:id', authorize(), getSuccessMatchesForFlatee);
 router.get('/getSuccessMatchesForListing/:id', authorize(), getSuccessMatchesForListing);
 router.get('/potentialMatchesForFlatee', authorize(), getPotentialMatchesForFlatee);
-router.get('/getPotentialFlatAccountsForFlatee', authorize(), getPotentialFlatAccountsForFlatee);
 router.get('/potentialMatchesForListing', authorize(), getPotentialMatchesForListing);
 router.post('/addListing', authorize(), addListing);
 router.post('/addFlatee', authorize(), addFlatee);
@@ -42,13 +41,6 @@ function getSuccessMatchesForListing(req, res, next) {
 function getPotentialMatchesForFlatee(req, res, next) {
 
     matchService.getPotentialMatchesForFlatee(req.query)
-        .then(matches => res.json(matches))
-        .catch(err => next(err));
-}
-
-function getPotentialFlatAccountsForFlatee(req, res, next) {
-
-    matchService.getPotentialFlatAccountsForFlatee(req.query)
         .then(matches => res.json(matches))
         .catch(err => next(err));
 }
