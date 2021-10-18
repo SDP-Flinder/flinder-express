@@ -5,11 +5,17 @@ const Schema = mongoose.Schema;
 const ListingSchema = new Schema({
   flat_id: { type: String, required: true },
   description: { type: String, required: true },
-  utilities: { type: String, required: true },
   rent: { type: Number, required: true },
   rentUnits: { type: String, required: true },
   roomAvailable: { type: Date, required: true },
-  active: { type: Boolean, required: true }
+  active: { type: Boolean, required: true },
+  utilities: { type: Object,
+    properties: { 
+        water: { type: Boolean },
+        power: { type: Boolean },
+        internet: { type: Boolean },
+    } 
+},
 });
 
 ListingSchema.set('toJSON', {

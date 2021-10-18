@@ -3,11 +3,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
 const Listing = db.Listing;
+const User = db.User;
 
 module.exports = {
     getAll,
     getOwned,
     getById,
+    getFlatAccount,
     addListing,
     update,
     delete: _delete
@@ -27,6 +29,13 @@ async function getOwned(id) {
 //Find and return the specified listing from the database
 async function getById(id) {
     return await Listing.findById(id);
+}
+
+//Find the flat account that owns the specified listing
+async function getFlatAccount(id) {
+  const listing = await Listing.findById(id);
+  const user = await User.findById(listing.flat_id);
+  return user;
 }
 
 //Create a new listing from the provided parameters, save it to the database and return

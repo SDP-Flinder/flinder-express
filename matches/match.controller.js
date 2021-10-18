@@ -6,14 +6,14 @@ const matchState = require('../_helpers/match-state');
 
 // routes
 router.get('/', authorize(), getAll);
-router.get('/getSuccessMatchesForFlatee', authorize(), getSuccessMatchesForFlatee);
-router.get('/getSuccessMatchesForListing', authorize(), getSuccessMatchesForListing);
-router.get('/potentialmatchesForFlatee', authorize(), getPotentialMatchesForFlatee);
-router.get('/getPotentialFlatAccountsForFlatee', authorize(), getPotentialFlatAccountsForFlatee);
-router.get('/potentialmatchesForListing', authorize(), getPotentialMatchesForListing);
+router.get('/getSuccessMatchesForFlatee/:id', authorize(), getSuccessMatchesForFlatee);
+router.get('/getSuccessMatchesForListing/:id', authorize(), getSuccessMatchesForListing);
+router.get('/potentialMatchesForFlatee', authorize(), getPotentialMatchesForFlatee);
+router.get('/potentialMatchesForListing', authorize(), getPotentialMatchesForListing);
 router.post('/addListing', authorize(), addListing);
 router.post('/addFlatee', authorize(), addFlatee);
 router.put('/unmatch', authorize(), unmatch);
+router.get('/findFlatee/:id', authorize(), findFlatee);
 router.delete('/:id', authorize(), _delete);
 
 module.exports = router;
@@ -26,14 +26,14 @@ function getAll(req, res, next) {
 
 function getSuccessMatchesForFlatee(req, res, next) {
 
-    matchService.getSuccessMatchesForFlatee(req.query)
+    matchService.getSuccessMatchesForFlatee(req.params.id)
         .then(matches => res.json(matches))
         .catch(err => next(err));
 }
 
 function getSuccessMatchesForListing(req, res, next) {
 
-    matchService.getSuccessMatchesForListing(req.query)
+    matchService.getSuccessMatchesForListing(req.params.id)
         .then(matches => res.json(matches))
         .catch(err => next(err));
 }
@@ -41,13 +41,6 @@ function getSuccessMatchesForListing(req, res, next) {
 function getPotentialMatchesForFlatee(req, res, next) {
 
     matchService.getPotentialMatchesForFlatee(req.query)
-        .then(matches => res.json(matches))
-        .catch(err => next(err));
-}
-
-function getPotentialFlatAccountsForFlatee(req, res, next) {
-
-    matchService.getPotentialFlatAccountsForFlatee(req.query)
         .then(matches => res.json(matches))
         .catch(err => next(err));
 }
@@ -76,6 +69,13 @@ function unmatch(req, res, next) {
     matchService.unmatch(req.body)
         .then(user => user ? res.json(user) : res.sendStatus(404))
         .catch(err => next(err));
+}
+
+function findFlatee(req, res, next) {
+
+  matchService.findFlatee(req.params.id)
+      .then(user => user ? res.json(user) : res.sendStatus(404))
+      .catch(err => next(err));
 }
 
 function _delete(req, res, next) {
