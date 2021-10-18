@@ -8,7 +8,11 @@ const matchListSchema = new Schema({
     listingID: { type: String },
     matchedDate: { type: Date, default: null }, //only when matchState is 'matched', then update the matchedDate from null
     //to Date.now
-    matchState: { type: String, enum: ['no-match', 'flatee-pending', 'list-pending', 'matched'], default: 'no-match' },
+    matchState: { 
+        type: String, 
+        enum: ['no-match', 'flatee-pending', 'list-pending', 'matched'], 
+        default: 'no-match' 
+    },
 });
 
 matchListSchema.set('toJSON', {
