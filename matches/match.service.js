@@ -2,6 +2,7 @@ const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
+const { addNotification } = require('../notification/notification.service');
 const matchList = db.matchList;
 const users = db.User;
 const listings = db.Listing;
@@ -142,17 +143,21 @@ async function getPotentialMatchesForListing(flatParam) {
 async function addListing(matchParam) { 
 
     let match = await matchList.findOne({ flateeUsername: matchParam.flateeUsername, listingID: matchParam.listingID })
-    if (match)
-    {
-        if (match.matchState == 'flatee-pending')
-        {
+    if (match) {
+        if (match.matchState == 'flatee-pending') {
             matchParam.matchState = 'matched';
             matchParam.matchedDate = Date.now();
             Object.assign(match, matchParam);
+
+            // Create Notification
+            addNotification({
+                userID: users.findOne({username: matchParam.username}).id, 
+                title: "New Match.", 
+                message: `${matchParam.listingID} has matched with you`, 
+                link: `/match/${matchParam.id}`
+            });
         }
-    }
-    else
-    {
+    } else {
         matchParam.matchState = 'list-pending';
         match = new matchList(matchParam);
     }
@@ -176,6 +181,14 @@ async function addFlatee(matchParam) {
             matchParam.matchState = 'matched';
             matchParam.matchedDate = Date.now();
             Object.assign(match, matchParam);
+
+            // Create Notification
+            addNotification({
+                userID: listing.findById(matchParam.listingID).flat_id, 
+                title: "New Match.", 
+                message: `${users.findOne({username: matchParam.username}).firstName} has matched with you`, 
+                link: `/match/${matchParam.id}`
+            });
         }
     }
     else
