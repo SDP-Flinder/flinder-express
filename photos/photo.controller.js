@@ -11,14 +11,13 @@ const storage = multer.diskStorage({
 
     },
     filename: function(req, file,cb) {
-        cb(null, new Date().toISOString() + file.originalname);
+        cb(null, Date.now() + file.originalname + file.originalname);
     }
-
 });
 
 //This doesn't work
 const fileFilter = (req, file, cb) => {
-    if(file.minetype === 'image/jpeg' || file.minetype === 'image/png'){
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
         cb(null, true);     //accept the file
     } else {
         //reject
@@ -28,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-    storage: storage
+    storage: storage,
 });
 
 // routes
