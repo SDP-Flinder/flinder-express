@@ -16,7 +16,6 @@ app.use('/flats', require('./flats/flat.controller'));
 app.use('/matches', require('./matches/match.controller'));
 app.use('/listings', require('./listings/listing.controller'));
 app.use('/locations', require('./locations/location.controller'));
-app.use('/photos', require('./photos/photo.controller'));
 
 //Retrieve the photo folder
 app.use('/uploads', express.static('uploads'));
