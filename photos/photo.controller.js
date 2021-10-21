@@ -45,7 +45,6 @@ module.exports = router;
  */
 function create(req, res, next) {
     console.log(req.file);
-    console.log('fuck yhu')
     photoService.create(req.file, req.body)
         .then((msg) => (msg == 'user-created') ? authenticate((req.body.username, req.body.password), res, next) : res.json({message: msg}))
         .catch(err => next(err));
