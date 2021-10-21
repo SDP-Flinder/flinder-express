@@ -30,21 +30,10 @@ async function create(file, userParam) {
 }
 
 async function update(id, userParam) {
-    const user = await User.findById(id);
+    const photo = await Photo.findById(id);
 
-    // validate
-    if (!user) throw 'User not found';
-    if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
-        throw 'Username "' + userParam.username + '" is already taken';
-    }
-    
     // copy userParam properties to user
-    Object.assign(user, userParam.body);
-
-    // hash password if it was entered
-    if (userParam.body.password) {
-        user.hash = bcrypt.hashSync(userParam.body.password, 10);
-    }
+    Object.assign(photo, userParam.body);
 
     console.log('user data is', user);
 
