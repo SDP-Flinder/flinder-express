@@ -1,6 +1,4 @@
-const config = require('../config.json');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const { addNotification } = require('../notification/notification.service');
 const db = require('../_helpers/db');
 const matchList = db.matchList;
 const users = db.User;
@@ -210,6 +208,14 @@ async function addListing(matchParam) {
             matchParam.matchState = 'matched';
             matchParam.matchedDate = Date.now();
             Object.assign(match, matchParam);
+
+            // Create Notification
+            addNotification({
+                userID: users.findOne({username: matchParam.username}).id, 
+                title: "New Match.", 
+                message: `${matchParam.listingID} has matched with you`, 
+                link: `/match/${matchParam.id}`
+            });
         }
     }
     else
@@ -237,6 +243,14 @@ async function addFlatee(matchParam) {
             matchParam.matchState = 'matched';
             matchParam.matchedDate = Date.now();
             Object.assign(match, matchParam);
+
+            // Create Notification
+            addNotification({
+                userID: listing.findById(matchParam.listingID).flat_id, 
+                title: "New Match.", 
+                message: `${users.findOne({username: matchParam.username}).firstName} has matched with you`, 
+                link: `/match/${matchParam.id}`
+            });
         }
     }
     else
