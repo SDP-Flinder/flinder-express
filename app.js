@@ -18,6 +18,9 @@ app.use('/listings', require('./listings/listing.controller'));
 app.use('/locations', require('./locations/location.controller'));
 app.use('/notification', require('./notification/notification.controller'));
 
+//Retrieve the photo folder
+app.use('/uploads', express.static('uploads'));
+
 app.get('/logout', authorize(), logout);
 // app.get('/login', login);
 

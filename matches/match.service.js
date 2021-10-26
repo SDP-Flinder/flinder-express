@@ -18,7 +18,8 @@ module.exports = {
     addFlatee,
     unmatch,
     findFlatee,
-    delete: _delete
+    delete: _delete,
+    getAllInvalidMatches
 };
 
 async function getAll() {
@@ -287,4 +288,27 @@ async function findFlatee(id) {
 
 async function _delete(id) {
     await matchList.findByIdAndRemove(id);
+}
+
+//admin use to delete invalid matches where either side of match have deleted their accounts
+async function getAllInvalidMatches() {
+    var cursor = matchList.find({}).cursor();
+    var tempList = [];
+    for (var doc = await cursor.next(); doc != null; doc = await cursor.next()) 
+    {
+        var tempUser = await users.findOne({ username: doc.flateeUsername });
+        if (tempUser == null)
+        {
+            tempList.push(doc.id);
+        }
+        else if (tempUser)
+        {
+            var tempListing = await listings.findOne({ _id: doc.listingID });
+            if (tempListing == null)
+            {
+                tempList.push(doc.id);
+            }
+        }
+    }
+    return tempList;
 }

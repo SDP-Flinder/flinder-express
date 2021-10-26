@@ -15,6 +15,7 @@ router.post('/addFlatee', authorize(), addFlatee);
 router.put('/unmatch', authorize(), unmatch);
 router.get('/findFlatee/:id', authorize(), findFlatee);
 router.delete('/:id', authorize(), _delete);
+router.get('/getAllInvalidMatches', authorize(), getAllInvalidMatches);
 
 module.exports = router;
 
@@ -80,6 +81,12 @@ function findFlatee(req, res, next) {
 
 function _delete(req, res, next) {
     matchService.delete(req.params.id)
+        .then(user => user ? res.json(user) : res.sendStatus(404))
+        .catch(err => next(err));
+}
+
+function getAllInvalidMatches(req, res, next) {
+    matchService.getAllInvalidMatches()
         .then(user => user ? res.json(user) : res.sendStatus(404))
         .catch(err => next(err));
 }
