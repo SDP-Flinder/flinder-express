@@ -3,6 +3,7 @@ const router = express.Router();
 const matchService = require('./match.service');
 const {authorize} = require('../_helpers/authorize')
 const matchState = require('../_helpers/match-state');
+const Role = require('../_helpers/role');
 
 // routes
 router.get('/', authorize(), getAll);
@@ -16,7 +17,30 @@ router.put('/unmatch', authorize(), unmatch);
 router.get('/findFlatee/:id', authorize(), findFlatee);
 router.delete('/:id', authorize(), _delete);
 
+// Messaging
+router.post('/message', authorize(), message);
+router.get('/messages', authorize(), getAllMessages);
+router.get('/message/:messageId', authorize(), getMessageById);
+
 module.exports = router;
+
+function message(req, res, next) {
+    matchService.createMessage(req.body)
+        .then((message) => res.json({message}))
+        .catch(err => next(err));
+}
+
+function getAllMessages(req, res, next) {
+    matchService.getAllMessages()
+        .then((messages) => res.json(messages))
+        .catch(err => next(err));
+}
+
+function getMessageById(req, res, next) {
+    matchService.getById(req.params.messageId)
+        .then((message) => message ? res.json(message) : res.json([]))
+        .catch(err => next(err));
+}
 
 function getAll(req, res, next) {
     matchService.getAll()

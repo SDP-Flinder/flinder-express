@@ -2,10 +2,11 @@ const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../_helpers/db');
-const matchList = db.matchList;
+const match = db.Match;
 const users = db.User;
 const listings = db.Listing;
 const extensiveUserInfo = require('./extensiveUserInfo.model');
+const message = require('./message.model');
 
 module.exports = {
     getAll,
@@ -17,22 +18,45 @@ module.exports = {
     addFlatee,
     unmatch,
     findFlatee,
-    delete: _delete
+    delete: _delete,
+    getAllMessages,
+    getMessageById,
+    createMessage,
 };
 
+async function getAllMessages() {
+    return await match.find().messages;
+}
+
+async function getMessageById(id) {
+    return await match.findOne({'messages.id': id});
+}
+
+async function createMessage(messageParams) {
+    const sender = messageParams.sender;
+    const text = messageParams.text;
+
+    const newMessage = new message({
+        sender,
+        text
+    });
+
+    return await newMessage.save();
+}
+
 async function getAll() {
-    return await matchList.find();
+    return await match.find();
 }
 
 //this shows all profiles that the current profile has successfully matched with (for chat purposes)
 async function getSuccessMatchesForFlatee(id) {
     let user = await users.findById(id);
-    return await matchList.find({ flateeUsername: user.username, matchState: 'matched' });
+    return await match.find({ flateeUsername: user.username, matchState: 'matched' });
 }
 
 //this shows all profiles that the current profile has successfully matched with (for chat purposes)
 async function getSuccessMatchesForListing(id) {
-    return await matchList.find({ listingID: id, matchState: 'matched' });
+    return await match.find({ listingID: id, matchState: 'matched' });
 }
 
 //appears as cards on main page for swiping 
