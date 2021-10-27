@@ -4,8 +4,10 @@ const matchList = db.matchList;
 const users = db.User;
 const listings = db.Listing;
 const extensiveUserInfo = require('./extensiveUserInfo.model');
+const message = require('./message.model');
 
 module.exports = {
+    getById,
     getAll,
     getSuccessMatchesForFlatee,
     getSuccessMatchesForListing,
@@ -16,8 +18,54 @@ module.exports = {
     unmatch,
     findFlatee,
     delete: _delete,
-    getAllInvalidMatches
+    getAllInvalidMatches,
+    getAllMessagesById,
+    getMessageById,
+    createMessage,
 };
+
+async function getAllMessagesById(matchID) {
+    return await matchList.findById(matchID).messages;
+}
+
+async function getMessageById(id) {
+    return await matchList.findOne({'messages.id': id});
+}
+
+async function createMessage(messageParams) {
+    const matchId = messageParams.matchId;
+    const m = await matchList.findById(matchId);
+    const flatAccountID = await listings.findById(matchId);
+    
+    // validate
+    if (!m) 
+        throw 'match-not-found';
+
+    if (m.flateeID === messageParams.sender || flatAccountID === messageParams.sender ) {
+        const sender = messageParams.sender;
+        const text = messageParams.text;
+
+        const newMessage = new message({
+            sender,
+            text
+        });
+
+        if(m.messages[0] !== undefined){
+            m.messages[0].push({newMessage});
+        }
+        else{
+            m.messages[0] = [newMessage];
+        }
+
+        return await m.save();
+    } else {
+        throw 'sender-not-part-match';
+    }
+}
+
+async function getById(id) {
+    return await matchList.findById(id);
+}
 
 async function getAll() {
     return await matchList.find();
@@ -49,7 +97,7 @@ async function getPotentialMatchesForFlatee(flateeParam) {
         }
         else
         {
-            var tempMatch = await matchList.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
+            var tempMatch = await match.findOne({ flateeUsername: flateeParam.flateeUsername, listingID: doc._id });
             var makeCompleteUserInfo = new extensiveUserInfo({
                 listing: doc,
                 accountUser: listingValid
@@ -155,7 +203,7 @@ async function getPotentialMatchesForListing(flatParam) {
     {
         if (doc.role == 'flatee' && doc.username != null)
         {
-            var tempMatch = await matchList.findOne({ flateeUsername: doc.username, listingID: flatParam.listingID });
+            var tempMatch = await match.findOne({ flateeUsername: doc.username, listingID: flatParam.listingID });
             if (tempMatch == null)
             {
                 console.log(doc.username);
@@ -275,7 +323,7 @@ async function unmatch(matchParam) {
 
     if (match == null)
     {
-        match = new matchList(matchParam);
+        match = new match(matchParam);
     }
     match.matchState = 'no-match';
 
