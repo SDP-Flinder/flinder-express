@@ -32,7 +32,7 @@ function createMessage(req, res, next) {
 }
 
 function getAllMessagesById(req, res, next) {
-    matchService.getAllMessagesById(req.params.id)
+    matchService.getAllMessagesById(req.params.matchId)
         .then((messages) => res.json(messages))
         .catch(err => next(err));
 }

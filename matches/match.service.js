@@ -24,8 +24,8 @@ module.exports = {
     createMessage,
 };
 
-async function getAllMessagesById(matchID) {
-    return await matchList.findById(matchID).messages;
+async function getAllMessagesById(matchId) {
+    return await matchList.findById(matchId).messages;
 }
 
 async function getMessageById(id) {
@@ -33,15 +33,16 @@ async function getMessageById(id) {
 }
 
 async function createMessage(messageParams) {
+
+    
     const matchId = messageParams.matchId;
     const m = await matchList.findById(matchId);
-    const flatAccountID = await listings.findById(matchId);
     
     // validate
     if (!m) 
         throw 'match-not-found';
 
-    if (m.flateeID === messageParams.sender || flatAccountID === messageParams.sender ) {
+    if (m.flateeID === messageParams.sender || m.listingID === messageParams.sender ) {
         const sender = messageParams.sender;
         const text = messageParams.text;
 
@@ -50,12 +51,7 @@ async function createMessage(messageParams) {
             text
         });
 
-        if(m.messages[0] !== undefined){
-            m.messages[0].push({newMessage});
-        }
-        else{
-            m.messages[0] = [newMessage];
-        }
+        m.messages.push(newMessage);
 
         return await m.save();
     } else {
